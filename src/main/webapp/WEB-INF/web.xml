@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://java.sun.com/xml/ns/javaee" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" id="WebApp_ID" version="2.5">
+	<display-name>webAppLegacy</display-name>
+	<listener>
+		<listener-class>com.sun.xml.ws.transport.http.servlet.WSServletContextListener</listener-class>
+	</listener>
+
+	<filter>
+		<filter-name>PROD_FILTER</filter-name>
+		<filter-class>com.proveedor.funcionalidad.filter.ProdFilter</filter-class>
+		<init-param>
+			<param-name>test-param</param-name>
+			<param-value>This parameter is for testing.</param-value>
+		</init-param>
+	</filter>
+	<filter-mapping>
+		<filter-name>PROD_FILTER</filter-name>
+		<url-pattern>*</url-pattern>
+	</filter-mapping>
+
+	<servlet>
+		<servlet-name>producto</servlet-name>
+		<servlet-class>com.sun.xml.ws.transport.http.servlet.WSServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>producto</servlet-name>
+		<url-pattern>/v2/webAppLegacy/producto</url-pattern>
+	</servlet-mapping>
+	<session-config>
+		<session-timeout>120</session-timeout>
+	</session-config>
+
+	<env-entry>
+		<description>Variable para configurar host de servicio</description>
+		<env-entry-name>APP_HOST</env-entry-name>
+		<env-entry-type>java.lang.String</env-entry-type>
+		<env-entry-value>localhost:8080</env-entry-value>
+	</env-entry>
+	<env-entry>
+		<description>Variable para configurar puerto de servicio</description>
+		<env-entry-name>APP_PORT</env-entry-name>
+		<env-entry-type>java.lang.String</env-entry-type>
+		<env-entry-value>8080</env-entry-value>
+	</env-entry>
+	<env-entry>
+		<description>Variable para configurar HOSTNAME_BASE</description>
+		<env-entry-name>HOSTNAME_BASE</env-entry-name>
+		<env-entry-type>java.lang.String</env-entry-type>
+		<env-entry-value>localhost</env-entry-value>
+	</env-entry>
+	<env-entry>
+		<description>Variable para configurar ENV</description>
+		<env-entry-name>ENV</env-entry-name>
+		<env-entry-type>java.lang.String</env-entry-type>
+		<env-entry-value>development</env-entry-value>
+	</env-entry>
+	<env-entry>
+		<description>Variable para configurar URI_POD</description>
+		<env-entry-name>URI_POD</env-entry-name>
+		<env-entry-type>java.lang.String</env-entry-type>
+		<env-entry-value>webapplegacyv3-service.web-app-space.svc.cluster.local:80</env-entry-value>
+	</env-entry>
+	<env-entry>
+		<description>Variable para configurar WSNAME</description>
+		<env-entry-name>WSNAME</env-entry-name>
+		<env-entry-type>java.lang.String</env-entry-type>
+		<env-entry-value>prodWebservice</env-entry-value>
+	</env-entry>
+	<env-entry>
+		<description>Variable para configurar AWS_URL_ENCRYPT_DECRYPT</description>
+		<env-entry-name>AWS_URL_ENCRYPT_DECRYPT</env-entry-name>
+		<env-entry-type>java.lang.String</env-entry-type>
+		<env-entry-value>http://localhost:32000/lambda/v1/criptor</env-entry-value>
+	</env-entry>
+	<env-entry>
+		<description>Variable para configurar HTTP_CONSULTA_PRODUCTO</description>
+		<env-entry-name>HTTP_CONSULTA_PRODUCTO</env-entry-name>
+		<env-entry-type>java.lang.String</env-entry-type>
+		<env-entry-value>http://producto-consulta-service.web-app-space.svc.cluster.local/product</env-entry-value>
+	</env-entry>
+	<env-entry>
+		<description>Variable para configurar HTTP_ALTA_PRODUCTO</description>
+		<env-entry-name>HTTP_ALTA_PRODUCTO</env-entry-name>
+		<env-entry-type>java.lang.String</env-entry-type>
+		<env-entry-value>http://producto-alta-service.web-app-space.svc.cluster.local/product/create</env-entry-value>
+	</env-entry>
+	<env-entry>
+		<description>Variable para configurar HTTP_MODIFICATION_PRODUCTO</description>
+		<env-entry-name>HTTP_MODIFICATION_PRODUCTO</env-entry-name>
+		<env-entry-type>java.lang.String</env-entry-type>
+		<env-entry-value>http://producto-modificacion-service.web-app-space.svc.cluster.local/product/update</env-entry-value>
+	</env-entry>
+</web-app>

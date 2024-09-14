@@ -1,0 +1,197 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: webapplegacy-environment
+  namespace: web-app-space
+  annotations:
+    strategy.spinnaker.io/versioned: "false"
+  labels:
+    app: webapplegacy-service
+data:
+  APP_HOST: "localhost"
+  APP_PORT: "8080"
+  HOSTNAME_BASE: "webapp-pp.dominio.com"
+  ENV: "production"
+  URI_POD: "webapplegacy-service.web-app-space.svc.cluster.local:80"
+  WSNAME: "prodWebservice"
+  HTTP_CONSULTA_PRODUCTO: "https://producto-consulta-service.web-app-space.svc.cluster.local/product"
+  HTTP_ALTA_PRODUCTO: "https://producto-alta-service.web-app-space.svc.cluster.local/product/create"
+  HTTP_MODIFICATION_PRODUCTO: "https://producto-modificacion-service.web-app-space.svc.cluster.local/product/update"
+  PWD_KEYSTORE: "password"
+  BEGIN_CERTIFICATE: "-----BEGIN CERTIFICATE-----"
+  END_CERTIFICATE: "-----END CERTIFICATE-----"
+  BEGIN_RSA_PRIVATE_KEY: "-----BEGIN RSA PRIVATE KEY-----"
+  END_RSA_PRIVATE_KEY: "-----END RSA PRIVATE KEY-----"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: webapplegacy-service
+  namespace: web-app-space
+spec:
+  selector:
+    app: webapplegacy-service
+  ports:
+    - name: "http"
+      port: 80
+      protocol: TCP
+      targetPort: 8080
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: webapplegacy-service-deployment
+  namespace: web-app-space
+  labels:
+    app: webapplegacy-service
+spec:
+  replicas: 1
+  strategy: {}
+  selector:
+    matchLabels:
+      app: webapplegacy-service
+  template:
+    metadata:
+      labels:
+        app: webapplegacy-service
+    spec:
+      containers:
+        - name: webapplegacy-service
+          image: <<almacen_imagen_docker>>
+          imagePullPolicy: Always
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "150m"    
+            limits:
+              memory: "512Mi"
+              cpu: "500m" 
+          env:
+            - name: TZ
+              value: America/Santiago
+            - name: APP_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: webapplegacy-environment
+                  key: APP_HOST
+            - name: APP_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: webapplegacy-environment
+                  key: APP_PORT
+            - name: HOSTNAME_BASE
+              valueFrom:
+                configMapKeyRef:
+                  name: webapplegacy-environment
+                  key: HOSTNAME_BASE
+            - name: ENV
+              valueFrom:
+                configMapKeyRef:
+                  name: webapplegacy-environment
+                  key: ENV
+            - name: URI_POD
+              valueFrom:
+                configMapKeyRef:
+                  name: webapplegacy-environment
+                  key: URI_POD
+            - name: WSNAME
+              valueFrom:
+                configMapKeyRef:
+                  name: webapplegacy-environment
+                  key: WSNAME
+            - name: HTTP_CONSULTA_PRODUCTO
+              valueFrom:
+                configMapKeyRef:
+                  name: webapplegacy-environment
+                  key: HTTP_CONSULTA_PRODUCTO
+            - name: HTTP_ALTA_PRODUCTO
+              valueFrom:
+                configMapKeyRef:
+                  name: webapplegacy-environment
+                  key: HTTP_ALTA_PRODUCTO
+            - name: HTTP_MODIFICATION_PRODUCTO
+              valueFrom:
+                configMapKeyRef:
+                  name: webapplegacy-environment
+                  key: HTTP_MODIFICATION_PRODUCTO
+            - name: KEYBYTES
+              valueFrom:
+                configMapKeyRef:
+                  name: webapp-certificate-manager-tls
+                  key: KEYBYTES
+            - name: IVBYTES
+              valueFrom:
+                configMapKeyRef:
+                  name: webapp-certificate-manager-tls
+                  key: IVBYTES
+            - name: CERTIFICATE_CRT
+              valueFrom:            
+                configMapKeyRef: 
+                  name: webapp-certificate-manager-tls
+                  key: CERTIFICATE_CRT
+            - name: CERTIFICATE_KEY
+              valueFrom:                
+                configMapKeyRef:                  
+                  name: webapp-certificate-manager-tls
+                  key: CERTIFICATE_KEY
+            - name: CA_CRT
+              valueFrom:                
+                configMapKeyRef:                  
+                  name: webapp-certificate-manager-tls
+                  key: CA_CRT
+            - name: PWD_KEYSTORE
+              valueFrom:
+                configMapKeyRef:
+                  name: webapplegacy-environment
+                  key: PWD_KEYSTORE  
+            - name: BEGIN_CERTIFICATE
+              valueFrom:
+                configMapKeyRef:
+                  name: webapplegacy-environment
+                  key: BEGIN_CERTIFICATE  
+            - name: END_CERTIFICATE
+              valueFrom:
+                configMapKeyRef:
+                  name: webapplegacy-environment
+                  key: END_CERTIFICATE  
+            - name: BEGIN_RSA_PRIVATE_KEY
+              valueFrom:
+                configMapKeyRef:
+                  name: webapplegacy-environment
+                  key: BEGIN_RSA_PRIVATE_KEY 
+            - name: END_RSA_PRIVATE_KEY
+              valueFrom:
+                configMapKeyRef:
+                  name: webapplegacy-environment
+                  key: END_RSA_PRIVATE_KEY 
+          ports:
+            - containerPort: 8080
+          readinessProbe:
+            httpGet:
+              scheme: HTTP
+              path: /webapp/v2/webAppLegacy/producto
+              port: 8080
+              httpHeaders:
+                - name: Accept
+                  value: "*/*"
+            initialDelaySeconds: 50
+            periodSeconds: 10
+            failureThreshold: 5
+            timeoutSeconds: 35
+          livenessProbe:
+            httpGet:
+              scheme: HTTP
+              path: /webapp/v2/webAppLegacy/producto
+              port: 8080
+              httpHeaders:
+                - name: Accept
+                  value: "*/*"
+            initialDelaySeconds: 50
+            periodSeconds: 10
+            failureThreshold: 5
+            timeoutSeconds: 35
+      volumes:
+        - name: clusters-config-volume
+          configMap:
+            name: webapp-certificate-manager-tls
