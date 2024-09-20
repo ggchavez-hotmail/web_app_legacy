@@ -8,7 +8,7 @@ metadata:
   labels:
     app: webapplegacy-service
 data:
-  APP_HOST: "localhost"
+  APP_HOST: "localhost" #localhost:8080 para que funcione el portforward
   APP_PORT: "8080"
   HOSTNAME_BASE: "webapp-pp.dominio.com"
   ENV: "production"
@@ -22,6 +22,11 @@ data:
   END_CERTIFICATE: "-----END CERTIFICATE-----"
   BEGIN_RSA_PRIVATE_KEY: "-----BEGIN RSA PRIVATE KEY-----"
   END_RSA_PRIVATE_KEY: "-----END RSA PRIVATE KEY-----"
+  KEYBYTES: "1234556"
+  IVBYTES: "1234556"
+  CERTIFICATE_CRT: "1234556"
+  CERTIFICATE_KEY: "1234556"
+  CA_CRT: "1234556"
 ---
 apiVersion: v1
 kind: Service
@@ -58,7 +63,7 @@ spec:
     spec:
       containers:
         - name: webapplegacy-service
-          image: <<almacen_imagen_docker>>
+          image: ggchavezhotmail/web-app-legacy:v1
           imagePullPolicy: Always
           resources:
             requests:
@@ -118,27 +123,27 @@ spec:
             - name: KEYBYTES
               valueFrom:
                 configMapKeyRef:
-                  name: webapp-certificate-manager-tls
+                  name: webapplegacy-environment
                   key: KEYBYTES
             - name: IVBYTES
               valueFrom:
                 configMapKeyRef:
-                  name: webapp-certificate-manager-tls
+                  name: webapplegacy-environment
                   key: IVBYTES
             - name: CERTIFICATE_CRT
               valueFrom:            
                 configMapKeyRef: 
-                  name: webapp-certificate-manager-tls
+                  name: webapplegacy-environment
                   key: CERTIFICATE_CRT
             - name: CERTIFICATE_KEY
               valueFrom:                
                 configMapKeyRef:                  
-                  name: webapp-certificate-manager-tls
+                  name: webapplegacy-environment
                   key: CERTIFICATE_KEY
             - name: CA_CRT
               valueFrom:                
                 configMapKeyRef:                  
-                  name: webapp-certificate-manager-tls
+                  name: webapplegacy-environment
                   key: CA_CRT
             - name: PWD_KEYSTORE
               valueFrom:
@@ -164,9 +169,20 @@ spec:
               valueFrom:
                 configMapKeyRef:
                   name: webapplegacy-environment
-                  key: END_RSA_PRIVATE_KEY 
+                  key: END_RSA_PRIVATE_KEY
+            - name: CATALINA_OPTS
+              value: >-
+                -Dcom.sun.management.jmxremote=true
+                -Dcom.sun.management.jmxremote.port=9180
+                -Dcom.sun.management.jmxremote.rmi.port=9180
+                -Dcom.sun.management.jmxremote.ssl=false
+                -Dcom.sun.management.jmxremote.authenticate=false
+                -Dcom.sun.jmxremote.host=0.0.0.0
+                -Djava.rmi.server.hostname=127.0.0.1
+                -Djava.net.preferIPv4Stack=true
           ports:
             - containerPort: 8080
+            - containerPort: 9180
           readinessProbe:
             httpGet:
               scheme: HTTP
@@ -191,7 +207,3 @@ spec:
             periodSeconds: 10
             failureThreshold: 5
             timeoutSeconds: 35
-      volumes:
-        - name: clusters-config-volume
-          configMap:
-            name: webapp-certificate-manager-tls
