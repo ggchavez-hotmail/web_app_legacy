@@ -28,14 +28,14 @@ public class ProdFilter implements javax.servlet.Filter {
 		filterChain.doFilter(request, wrapper);
 		OutputStream out = response.getOutputStream();
 		String wsdl = new String(wrapper.getData(), StandardCharsets.UTF_8);
-		// con esto se realiza el cambio del end-point
-		// wsdl = wsdl.replace(":80", "");
-		// wsdl = wsdl.replace("localhost80", "localhost:8080");
+		// Con esto se realiza el cambio del end-point
+		wsdl = wsdl.replace(":80", "");
+		wsdl = wsdl.replace("localhost80", "localhost:8080");
 		// Esto deberia esta comentado
-		wsdl = wsdl.replace(this.config.getWsdlLocationOrigen(),
-				this.config.getWsdlLocationDestino())
-				.replace(this.config.getWsdlLocationOrigenCluster(),
-						this.config.getWsdlLocationDestino());
+		//wsdl = wsdl.replace(this.config.getWsdlLocationOrigen(),
+		//		this.config.getWsdlLocationDestino())
+		//		.replace(this.config.getWsdlLocationOrigenCluster(),
+		//				this.config.getWsdlLocationDestino());
 		byte[] byteArrray = wsdl.getBytes();
 
 		out.write(byteArrray);
