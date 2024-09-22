@@ -44,13 +44,27 @@ sudo apt install code
 
 ### JAVA OpenJDK ###
 
-Instalar JDK
+Instalar JDK, tener en cuenta que a veces se debe instalar adicionalmente la version por defecto
 
 ```shell
 sudo apt install openjdk-21-jdk
 ```
 
+```shell
+sudo apt install openjdk-17-jdk
+```
+
+```shell
+sudo apt install default-jdk
+```
+
 ### Repositorio ###
+
+Instalar GIT
+
+```shell
+sudo apt install git
+```
 
 Descargar Repositorio
 
@@ -58,7 +72,7 @@ Descargar Repositorio
 git clone https://github.com/ggchavez-hotmail/web_app_legacy.git
 ```
 
-### Docker ###
+### Docker Ubuntu ###
 
 Descargar dependencias
 
@@ -104,6 +118,21 @@ sudo usermod -aG docker $USER
 Reiniciar sistema operativo
 
 ```shell
+sudo shutdown -r now
+```
+
+### Docker Debian ###
+
+Proceso completo, similar al Ubuntu
+
+```shell
+sudo apt update
+sudo apt install apt-transport-https ca-certificates curl gnupg
+curl -fsSL https://download.docker.com/linux/debian/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker.gpg
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker.gpg] https://download.docker.com/linux/debian bookworm stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+sudo apt update
+sudo apt install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+sudo usermod -aG docker ${USER}
 sudo shutdown -r now
 ```
 
@@ -235,15 +264,15 @@ https://www.soapui.org/downloads/latest-release.html
 ```
 
 ```shell
-chmod 755 SoapUI-x64-X.X.X.sh
+chmod 755 SoapUI-x64-5.7.2.sh
 ```
 
 ```shell
-./SoapUI-x64-X.X.X.sh
+./SoapUI-x64-5.7.2.sh
 ```
 
 ```shell
-$HOME/SmartBear/SoapUI-X.X.X/bin/SoapUI-X.X.X
+$HOME/SmartBear/SoapUI-5.7.2/bin/SoapUI-5.7.2
 ```
 
 Mapear WSDL
@@ -256,16 +285,18 @@ Probar el END-POINT de Consulta, cambiar el ID=1
 
 ### JMETER ###
 
+https://dlcdn.apache.org//jmeter/binaries/apache-jmeter-5.6.3.zip
+
 ```shell
-wget https://downloads.apache.org/jmeter/binaries/apache-jmeter-X.X.zip
+wget https://downloads.apache.org/jmeter/binaries/apache-jmeter-5.6.3.zip
 ```
 
 ```shell
-unzip apache-jmeter-X.X.zip
+unzip apache-jmeter-5.6.3.zip
 ```
 
 ```shell
-cd apache-jmeter-X.X/bin
+cd apache-jmeter-5.6.3/bin
 ```
 
 ```shell
