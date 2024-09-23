@@ -1,17 +1,69 @@
 # web_app_legacy #
 
-## End-Point ##
+## Requisitos ##
 
-Url donde se encuentra el end-point
+Probado en maquina virtual Virtual Box (4 Core / 8Gb RAM).
+
+### Ubuntu ###
+
+Se utilizo Linux LITE (link)
 
 ```URL
-http://localhost:8080/webapp/v2/webAppLegacy/producto?wsdl
+https://www.linuxliteos.com/download.php
 ```
 
-Configuracion
+Montar VBoxAdditions
 
-- webapp : pom.xml -> finalName
-- /v2/webAppLegacy/producto : sun-jaxws.xml -> url-pattern
+Abrir Unidad montada
+
+Instalar Plugin
+
+```shell
+sudo sh ./VBoxLinuxAdditions.run
+```
+
+Reiniciar
+
+```shell
+sudo shutdown -r now
+```
+
+### Debian ###
+
+Se utilizo BunsenLabs (link)
+
+```URL
+https://www.bunsenlabs.org/installation.html
+```
+
+Se debe actualizar para instalar plugin
+
+```shell
+sudo apt update
+sudo apt upgrade
+```
+
+Instalar complementos
+
+```shell
+sudo apt install build-essential dkms linux-headers-$(uname -r)
+```
+
+Montar VBoxAdditions
+
+Abrir Unidad montada
+
+Instalar Plugin
+
+```shell
+sudo sh ./VBoxLinuxAdditions.run --nox11
+```
+
+Reiniciar
+
+```shell
+sudo shutdown -r now
+```
 
 ## Instalar y Configurar Herramientas ##
 
@@ -42,17 +94,23 @@ Instalar Code
 sudo apt install code
 ```
 
-### JAVA OpenJDK ###
+### JAVA OpenJDK UBUNTU ###
 
-Instalar JDK, tener en cuenta que a veces se debe instalar adicionalmente la version por defecto
+Simplemente es necesario instalar Open JDK 21.
 
 ```shell
 sudo apt install openjdk-21-jdk
 ```
 
+### JAVA OpenJDK DEBIAN ###
+
+Se debe instalar Open JDK 17 (version 21 no disponible por defecto).
+
 ```shell
 sudo apt install openjdk-17-jdk
 ```
+
+Adicionalmente para VisualVM, se debe instalar versión por defecto.
 
 ```shell
 sudo apt install default-jdk
@@ -217,10 +275,10 @@ Login a docker hub
 docker login
 ```
 
-Construir imagen docker
+Construir imagen docker (se debe estar en la raiz del proyecto Java descargado)
 
 ```shell
-docker build --pull --rm -f "web_app_legacy/Dockerfile" -t ggchavezhotmail/web-app-legacy:v1 "web_app_legacy"
+docker build --pull --rm -f "Dockerfile" -t ggchavezhotmail/web-app-legacy:v1 "web_app_legacy"
 ```
 
 Subir imagen docker
@@ -237,7 +295,7 @@ Crear namespace
 kubectl create namespace web-app-space
 ```
 
-Desplegar servicios en el cluster
+Desplegar servicios en el cluster (se debe estar en la raiz del proyecto Java descargado).
 
 ```shell
 kubectl apply -f service.yaml
@@ -285,35 +343,29 @@ Probar el END-POINT de Consulta, cambiar el ID=1
 
 ### JMETER ###
 
-https://dlcdn.apache.org//jmeter/binaries/apache-jmeter-5.6.3.zip
+Descargar JMETER
 
 ```shell
 wget https://downloads.apache.org/jmeter/binaries/apache-jmeter-5.6.3.zip
 ```
 
+Descomprimir
+
 ```shell
 unzip apache-jmeter-5.6.3.zip
 ```
+
+Navegar hasta binario
 
 ```shell
 cd apache-jmeter-5.6.3/bin
 ```
 
+Ejecutar
+
 ```shell
 ./jmeter
 ```
-
-Activar escuchador puerto
-
-Configurar en SOAP UI el proxy
-
-Crear grupo de hilo
-
-Asociar el escuchar al grupo de Hilo
-
-Ejecutar prueba en SOAP UI
-
-Configurar Grupo de hilo para lanzar pruebas
 
 ### Visual VM ###
 
@@ -338,4 +390,31 @@ kubectl port-forward deployment/webapplegacy-service-deployment 9180:9180 -n web
 Agregar "JMX Connexion"
 localhost:9180
 
-Ejecutar prueba con JMETER
+## Lanzar pruebas ##
+
+Agregar Escuchador de Puerto en JMETER.
+
+Configurar en SOAP UI el proxy.
+
+Crear grupo de hilo en JMETER.
+
+Asociar el escuchar al grupo de Hilo en JMETER.
+
+Ejecutar prueba en SOAP UI.
+
+Configurar Grupo de hilo para lanzar pruebas en JMETER.
+
+Ejecutar prueba con JMETER.
+
+## Configuración Fuentes ##
+
+Url donde se encuentra el end-point
+
+```URL
+http://localhost:8080/webapp/v2/webAppLegacy/producto?wsdl
+```
+
+Configuracion dentro de los fuentes:
+
+- webapp : pom.xml -> finalName
+- /v2/webAppLegacy/producto : sun-jaxws.xml -> url-pattern
